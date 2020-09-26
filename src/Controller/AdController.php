@@ -8,8 +8,11 @@
 
 namespace App\Controller;
 
+use App\Entity\Image;
 use App\Form\AdCreateType;
 use App\Manager\AdManager;
+use App\Manager\ImageManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -29,10 +32,17 @@ class AdController extends AbstractController
      * @var AdManager $adManager
      */
     protected $adManager;
+    /**
+     * @var ImageManager $imageManger
+     */
+    protected $imageManger;
 
-    public function __construct(AdManager $adManager)
+    public function __construct(
+        AdManager $adManager,
+        ImageManager $imageManager)
     {
         $this->adManager = $adManager;
+        $this->imageManger = $imageManager;
     }
 
     /**
@@ -84,12 +94,14 @@ class AdController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            foreach ($ad->getImages() as $image) {
+                $image->setAd($ad);
+                $this->imageManger->save($image, false);
+            }
             $this->adManager->save($ad);
-
             $this->addFlash(
                 'success', "Announcement <strong>{$ad->getTitle()}</strong> created"
             );
-
             return $this->redirectToRoute(
                 'ad_show', [
                     'slug' => $ad->getSlug()
