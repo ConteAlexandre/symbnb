@@ -46,6 +46,16 @@ class AdManager
     }
 
     /**
+     * @param string $slug
+     * @return Ad
+     */
+    public function getBySlug(string $slug)
+    {
+       $ad = $this->adRepository->findOneBySlug($slug);
+       return $ad;
+    }
+
+    /**
      * @param Ad $ad
      * @param bool $andFlush
      */
