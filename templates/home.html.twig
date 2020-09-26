@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>SymBNB</title>
+</head>
+<body>
+
+<h1>{{ title | upper }}</h1>
+
+{#{% if age >= 18 %}#}
+{#    <p>Vous etes un adulte</p>#}
+{#{% elseif age >= 12 %}#}
+{#    <p>Vous êtes un adoscelant</p>#}
+{#{% else %}#}
+{#    <p>Vous êtes un mineur</p>#}
+{#{% endif %}#}
+
+<ul>
+    {% for i in 0..10 %}
+        <li>{{ i }}</li>
+    {% endfor %}
+</ul>
+
+{% for prenom, age in tableau %}
+    {% if loop.first %}
+        <strong>{{ prenom }} a {{ age }} ans</strong>
+    {% elseif loop.last %}
+        <em>{{ prenom }} a {{ age }} ans</em>
+    {% else %}
+        <p>{{ prenom }} a {{ age }} ans</p>
+    {% endif %}
+{% endfor %}
+
+</body>
+</html>
