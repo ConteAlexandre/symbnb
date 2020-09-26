@@ -28,11 +28,31 @@ class HomeController extends AbstractController
         $prenoms = ["Lior" => 31, "Joseph" => 12, "Anne" => 55];
 
         return $this->render(
-            'home.html.twig',
+            'PrincipalTemplate/home.html.twig',
             [
                 'title' => "Bonjour à tous !",
                 'age' => 15,
                 'tableau' => $prenoms
+            ]
+        );
+    }
+
+    /**
+     * @Route("/hello/{prenom}/age/{age}", name="hello")
+     * @Route("/salut", name="hello_base")
+     * @Route("/hello/{prenom}", name="hello_prenom")
+     *
+     * @param string $prenom
+     *
+     * @return Response
+     */
+    public function hello( $prenom= "anonyme", $age = 0)
+    {
+        return $this->render(
+            'hello.html.twig',
+            [
+                'prenom' => $prenom,
+                'age' => $age
             ]
         );
     }
