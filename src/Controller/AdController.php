@@ -8,6 +8,7 @@
 
 namespace App\Controller;
 
+use App\Manager\AdManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -24,10 +25,14 @@ class AdController extends AbstractController
     /**
      * @Route("/list", name="list", methods={"GET"})
      */
-    public function listAnnouncements()
+    public function listAnnouncements(AdManager $adManager)
     {
+        $ads = $adManager->getAll();
+
         return $this->render(
-            'Ad/list_ad.html.twig'
+            'Ad/list_ad.html.twig', [
+                'ads' => $ads
+            ]
         );
     }
 }
