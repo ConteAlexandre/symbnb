@@ -11,6 +11,7 @@ namespace App\Controller;
 use App\Form\AdCreateType;
 use App\Manager\AdManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -72,12 +73,29 @@ class AdController extends AbstractController
     /**
      * @Route("/create", name="create")
      *
+     * @param Request $request
+     *
      * @return Response
      */
-    public function createAnnouncement()
+    public function createAnnouncement(Request $request)
     {
         $ad = $this->adManager->createAnnouncement();
         $form = $this->createForm(AdCreateType::class, $ad);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->adManager->save($ad);
+
+            $this->addFlash(
+                'success', "Announcement <strong>{$ad->getTitle()}</strong> created"
+            );
+
+            return $this->redirectToRoute(
+                'ad_show', [
+                    'slug' => $ad->getSlug()
+                ]
+            );
+        }
 
         return $this->render(
             'Ad/create.html.twig', [
