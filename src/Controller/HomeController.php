@@ -28,7 +28,7 @@ class HomeController extends AbstractController
         $prenoms = ["Lior" => 31, "Joseph" => 12, "Anne" => 55];
 
         return $this->render(
-            'PrincipalTemplate/home.html.twig',
+            'principal/home.html.twig',
             [
                 'title' => "Bonjour à tous !",
                 'age' => 15,
