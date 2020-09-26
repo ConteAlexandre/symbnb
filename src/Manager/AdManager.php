@@ -56,6 +56,15 @@ class AdManager
     }
 
     /**
+     * @return Ad
+     */
+    public function createAnnouncement()
+    {
+        $ad = new Ad();
+        return $ad;
+    }
+
+    /**
      * @param Ad $ad
      * @param bool $andFlush
      */

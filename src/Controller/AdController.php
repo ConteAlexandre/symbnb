@@ -8,6 +8,7 @@
 
 namespace App\Controller;
 
+use App\Form\AdCreateType;
 use App\Manager\AdManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -24,19 +25,27 @@ use Symfony\Component\Routing\Annotation\Route;
 class AdController extends AbstractController
 {
     /**
+     * @var AdManager $adManager
+     */
+    protected $adManager;
+
+    public function __construct(AdManager $adManager)
+    {
+        $this->adManager = $adManager;
+    }
+
+    /**
      * @Route("/list", name="list", methods={"GET"})
-     *
-     * @param AdManager $adManager
      *
      * @return Response
      */
-    public function listAnnouncements(AdManager $adManager)
+    public function listAnnouncements()
     {
-        $ads = $adManager->getAll();
+        $ads = $this->adManager->getAll();
 
         return $this->render(
             'Ad/list.html.twig', [
-                'ads' => $ads
+                'ads' => $ads,
             ]
         );
     }
@@ -45,18 +54,34 @@ class AdController extends AbstractController
      * @Route("/show/{slug}", name="show", methods={"GET"})
      *
      * @param string $slug
-     * @param AdManager $adManager
      *
      * @return Response
      */
-    public function showAnnouncement(string $slug, AdManager $adManager)
+    public function showAnnouncement(string $slug)
     {
-        $ad = $adManager->getBySlug($slug);
+        $ad = $this->adManager->getBySlug($slug);
 
         return $this->render(
             'Ad/show.html.twig',
             [
-                'ad' => $ad
+                'ad' => $ad,
+            ]
+        );
+    }
+
+    /**
+     * @Route("/create", name="create")
+     *
+     * @return Response
+     */
+    public function createAnnouncement()
+    {
+        $ad = $this->adManager->createAnnouncement();
+        $form = $this->createForm(AdCreateType::class, $ad);
+
+        return $this->render(
+            'Ad/create.html.twig', [
+                'form' => $form->createView(),
             ]
         );
     }

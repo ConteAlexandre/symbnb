@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Register the new announcement{% endblock %}
+
+{% form_theme form _self %}
+
+{% block body %}
+    <div class="container">
+        <h2>Register new announcement</h2>
+
+        {{ form_start(form) }}
+
+        {{ form_widget(form) }}
+
+        <button type="submit" class="btn btn-primary">Register</button>
+
+        {{ form_end(form) }}
+    </div>
+{% endblock %}
