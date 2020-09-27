@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Not Authorized{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h2>Not Authorized !</h2>
+        <div class="alert alert-danger">
+            <p>You not want authorized</p>
+        </div>
+
+        <a href="{{ path('homepage') }}" class="btn btn-primary">Home</a>
+    </div>
+{% endblock %}
