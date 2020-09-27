@@ -1,0 +1,83 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Booking n°{{ booking.id }}{% endblock %}
+
+{% block body %}
+    {% set ad = booking.ad %}
+    {% set author = ad.author %}
+
+    <div class="container">
+        <h2>Your booking n°{{ booking.id }}</h2>
+        {% if app.request.query.get('withAlert') %}
+            <div class="alert alert-success">
+                <h4 class="alert-heading">Congratulation !</h4>
+                <p>
+                    Your Booking near
+                    <strong>
+                        <a href="{{ path('user_profile', {'slug': author.slug}) }}">{{ author.fullName }}</a>
+                    </strong>
+                    for the announcement
+                    <strong>
+                        <a href="{{ path('ad_show', {'slug': ad.slug}) }}">{{ ad.title }}</a>
+                    </strong>
+                    has been taken into account !
+                </p>
+            </div>
+        {% endif %}
+        <div class="row">
+            <div class="col">
+                <div class="alert alert-light">
+                    <h3>Details</h3>
+                    <dl class="row">
+                        <dt class="col-md-4">Number</dt>
+                        <dd class="col-md-8">{{ booking.id }}</dd>
+                        <dt class="col-md-4">Start Date</dt>
+                        <dd class="col-md-8">{{ booking.startDate | date('d/m/Y') }}</dd>
+                        <dt class="col-md-4">End Date</dt>
+                        <dd class="col-md-8">{{ booking.endDate | date('d/m/Y') }}</dd>
+                        <dt class="col-md-4">Number of Nights</dt>
+                        <dd class="col-md-8">{{ booking.duration }}</dd>
+                        <dt class="col-md-4">Amount Total</dt>
+                        <dd class="col-md-8">{{ booking.amount }} &euro;</dd>
+                        <dt class="col-md-4">Comment</dt>
+                        <dd class="col-md-8">{{ booking.comment }}</dd>
+                    </dl>
+
+                    <hr>
+                    
+                    <h2 class="alert-heading">Our host</h2>
+                    <div class="row">
+                        <div class="col-3">
+                            <img src="{{ author.picture }}" class="avatar avatar-medium" alt="Avatar of {{ author.fullName }}">
+                        </div>
+                        <div class="col-9">
+                            <h4>
+                                <a href="{{ path('user_profile', {'slug': author.slug}) }}">{{ author.fullName }}</a>
+                            </h4>
+
+                            <span class="badge badge-primary">{{ author.ads | length }} announcements</span>
+                        </div>
+                    </div>
+                    {{ author.description | raw }}
+
+                    <a href="{{ path('user_profile', {'slug': author.slug}) }}" class="btn btn-primary">See more on {{ author.firstName }}</a>
+                </div>
+            </div>
+            <div class="col">
+                <div class="alert alert-light">
+                    <h2 class="alert-heading">Your hostname</h2>
+
+                    <h4>
+                        <a href="{{ path('ad_show', {'slug': ad.slug}) }}">{{ ad.title }}</a>
+                    </h4>
+
+                    <img src="{{ ad.coverImage }}" alt="Picture of {{ ad.title }}" class="img-fluid">
+
+                    {{ ad.content | raw }}
+
+                    <a href="{{ path('ad_show', {'slug': ad.slug}) }}" class="btn btn-primary">See more</a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
