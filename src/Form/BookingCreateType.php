@@ -9,8 +9,9 @@
 namespace App\Form;
 
 use App\Entity\Booking;
-use Symfony\Component\Form\Extension\Core\Type\DateType;
+use App\Form\DataTransformer\FrenchToDateTimeTransformer;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -22,6 +23,13 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class BookingCreateType extends ApplicationType
 {
+    private $transformer;
+
+    public function __construct(FrenchToDateTimeTransformer $dateTimeTransformer)
+    {
+        $this->transformer = $dateTimeTransformer;
+    }
+
     /**
      * @param FormBuilderInterface $builder
      * @param array $options
@@ -31,24 +39,26 @@ class BookingCreateType extends ApplicationType
         $builder
             ->add(
                 'startDate',
-                DateType::class,
-                $this->getConfiguration('Date Arrived', 'Start Date travel', [
-                    "widget" => "single_text"
-                ])
+                TextType::class,
+                $this->getConfiguration('Date Arrived', 'Start Date travel')
             )
             ->add(
                 'endDate',
-                DateType::class,
-                $this->getConfiguration('Date Leave', 'End Date travel',  [
-                    "widget" => "single_text"
-                ])
+                TextType::class,
+                $this->getConfiguration('Date Leave', 'End Date travel')
             )
             ->add(
                 'comment',
                 TextareaType::class,
-                $this->getConfiguration(false, 'Write a comment if necessary')
+                $this->getConfiguration(false, 'Write a comment if necessary', [
+                    'required' => false
+                ])
             )
         ;
+
+        $builder->get('startDate')->addModelTransformer($this->transformer);
+        $builder->get('endDate')->addModelTransformer($this->transformer);
+
     }
 
     /**

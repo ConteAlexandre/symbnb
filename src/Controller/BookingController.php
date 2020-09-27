@@ -56,12 +56,20 @@ class BookingController extends AbstractController
             $booking->setBooker($this->getUser())
                 ->setAd($ad)
             ;
-            $this->bookingManager->save($booking);
+            // If date not available
+            if (!$booking->isBookableDates()) {
+                $this->addFlash(
+                    'warning',
+                    "This dates is already take"
+                );
+            } else {
+                $this->bookingManager->save($booking);
 
-            return $this->redirectToRoute('book_show', [
-                'id' => $booking->getId(),
-                'withAlert' => true
-            ]);
+                return $this->redirectToRoute('book_show', [
+                    'id' => $booking->getId(),
+                    'withAlert' => true
+                ]);
+            }
         }
 
         return $this->render('booking/create.html.twig', [

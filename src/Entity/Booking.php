@@ -6,6 +6,7 @@ use App\Repository\BookingRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Blameable\Traits\BlameableEntity;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=BookingRepository::class)
@@ -37,11 +38,15 @@ class Booking
 
     /**
      * @ORM\Column(type="datetime")
+     * @Assert\Date(message="Warning the start Date bad format")
+     * @Assert\GreaterThan("today", message="Start date must be minimum today")
      */
     private $startDate;
 
     /**
      * @ORM\Column(type="datetime")
+     * @Assert\Date(message="Warning the end Date bad format")
+     * @Assert\GreaterThan(propertyPath="startDate", message="The end date must be more start date")
      */
     private $endDate;
 
@@ -65,6 +70,49 @@ class Booking
         if (empty($this->amount)) {
             $this->amount = $this->ad->getPrice() * $this->getDuration();
         }
+    }
+
+    public function isBookableDates()
+    {
+        $notAvailableDays = $this->ad->getNotAvailableDays();
+        $bookingDay = $this->getDays();
+
+        $formatDay = function ($day) {
+            return $day->format('Y-m-d');
+        };
+
+        $days = array_map($formatDay, $bookingDay);
+
+        $notAvailable = array_map($formatDay, $notAvailableDays);
+
+        foreach ($days as $day) {
+            if (array_search($day, $notAvailable) !== false) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Recover array of all days who correspond at the booking
+     *
+     * @return array
+     * @throws \Exception
+     */
+    public function getDays()
+    {
+        $result = range(
+            $this->startDate->getTimestamp(),
+            $this->endDate->getTimestamp(),
+            24 * 60 * 60
+        );
+
+        $days = array_map(function ($dayTimestamp) {
+            return new \DateTime(date('Y-m-d', $dayTimestamp));
+        }, $result);
+
+        return $days;
     }
 
     public function getDuration()
