@@ -8,8 +8,11 @@
 
 namespace App\Controller;
 
+use App\Entity\Image;
 use App\Form\AdCreateType;
 use App\Manager\AdManager;
+use App\Manager\ImageManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -29,10 +32,17 @@ class AdController extends AbstractController
      * @var AdManager $adManager
      */
     protected $adManager;
+    /**
+     * @var ImageManager $imageManger
+     */
+    protected $imageManger;
 
-    public function __construct(AdManager $adManager)
+    public function __construct(
+        AdManager $adManager,
+        ImageManager $imageManager)
     {
         $this->adManager = $adManager;
+        $this->imageManger = $imageManager;
     }
 
     /**
@@ -52,7 +62,7 @@ class AdController extends AbstractController
     }
 
     /**
-     * @Route("/show/{slug}", name="show", methods={"GET"})
+     * @Route("/slug}/show", name="show", methods={"GET"})
      *
      * @param string $slug
      *
@@ -84,12 +94,14 @@ class AdController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            foreach ($ad->getImages() as $image) {
+                $image->setAd($ad);
+                $this->imageManger->save($image, false);
+            }
             $this->adManager->save($ad);
-
             $this->addFlash(
                 'success', "Announcement <strong>{$ad->getTitle()}</strong> created"
             );
-
             return $this->redirectToRoute(
                 'ad_show', [
                     'slug' => $ad->getSlug()
@@ -102,5 +114,41 @@ class AdController extends AbstractController
                 'form' => $form->createView(),
             ]
         );
+    }
+
+    /**
+     * @Route("/{slug}/edit", name="edit")
+     *
+     * @param Request $request
+     * @param string $slug
+     *
+     * @return Response
+     */
+    public function editAnnouncement(string $slug, Request $request)
+    {
+        $ad = $this->adManager->getBySlug($slug);
+        $form = $this->createForm(AdCreateType::class, $ad);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            foreach ($ad->getImages() as $image) {
+                $image->setAd($ad);
+                $this->imageManger->save($image, false);
+            }
+            $this->adManager->save($ad);
+            $this->addFlash(
+                'success', "The modifications of this announcement <strong>{$ad->getTitle()}</strong> passed"
+            );
+            return $this->redirectToRoute(
+                'ad_show', [
+                    'slug' => $ad->getSlug()
+                ]
+            );
+        }
+
+        return $this->render('Ad/edit.html.twig', [
+            'form' => $form->createView(),
+            'ad' => $ad
+        ]);
     }
 }

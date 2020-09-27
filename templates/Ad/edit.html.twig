@@ -1,18 +1,18 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Register the new announcement{% endblock %}
+{% block title %}Edit the announcement{% endblock %}
 
 {% form_theme form 'Ad/_collection.html.twig' %}
 
 {% block body %}
     <div class="container">
-        <h2>Register new announcement</h2>
+        <h2>Edit the announcement : {{ ad.title }}</h2>
 
         {{ form_start(form) }}
 
         {{ form_widget(form) }}
 
-        <button type="submit" class="btn btn-primary">Register the new announcement</button>
+        <button type="submit" class="btn btn-primary">Update announcement</button>
 
         {{ form_end(form) }}
     </div>
