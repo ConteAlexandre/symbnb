@@ -101,7 +101,6 @@ class UserController extends AbstractController
             } else {
                 $newPassword = $passwordUpdate->getNewPassword();
                 $password = $this->encoderPassword->encodePassword($user, $newPassword);
-
                 $user->setPassword($password);
                 $this->em->persist($user);
                 $this->em->flush();
@@ -110,7 +109,6 @@ class UserController extends AbstractController
                     'success',
                     'Update password it\'s ok '
                 );
-
                 return $this->redirectToRoute('homepage');
             }
         }

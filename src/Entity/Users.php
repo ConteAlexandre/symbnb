@@ -101,6 +101,11 @@ class Users implements UserInterface
         }
     }
 
+    public function getFullName()
+    {
+        return "{$this->firstName} {$this->lastName}";
+    }
+
     public function __construct()
     {
         $this->ads = new ArrayCollection();

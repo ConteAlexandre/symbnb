@@ -62,7 +62,7 @@ class AdController extends AbstractController
     }
 
     /**
-     * @Route("/slug}/show", name="show", methods={"GET"})
+     * @Route("/{slug}/show", name="show", methods={"GET"})
      *
      * @param string $slug
      *
