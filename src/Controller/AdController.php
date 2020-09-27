@@ -8,11 +8,12 @@
 
 namespace App\Controller;
 
-use App\Entity\Image;
+use App\Entity\Ad;
 use App\Form\AdCreateType;
 use App\Manager\AdManager;
 use App\Manager\ImageManager;
-use Doctrine\ORM\EntityManagerInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -83,6 +84,7 @@ class AdController extends AbstractController
     /**
      * @Route("/create", name="create")
      *
+     * @IsGranted("ROLE_USER")
      * @param Request $request
      *
      * @return Response
@@ -120,12 +122,17 @@ class AdController extends AbstractController
     /**
      * @Route("/{slug}/edit", name="edit")
      *
+     * @Security(
+     *     expression="is_granted('ROLE_USER') and user === ad.getAuthor() ",
+     *     message="This announcement not be written at you"
+     * )
      * @param Request $request
      * @param string $slug
+     * @param Ad $ad
      *
      * @return Response
      */
-    public function editAnnouncement(string $slug, Request $request)
+    public function editAnnouncement(string $slug, Request $request, Ad $ad)
     {
         $ad = $this->adManager->getBySlug($slug);
         $form = $this->createForm(AdCreateType::class, $ad);
@@ -151,5 +158,25 @@ class AdController extends AbstractController
             'form' => $form->createView(),
             'ad' => $ad
         ]);
+    }
+
+    /**
+     * @Route("/{slug}/delete", name="delete")
+     *
+     * @Security(expression="is_granted('ROLE_USER') and user == ad.getAuthor()")
+     * @param Ad $ad
+     * @param $slug
+     *
+     * @return Response
+     */
+    public function deleteAnnouncement($slug, Ad $ad)
+    {
+        $this->adManager->deleteAnnouncement($slug);
+
+        $this->addFlash(
+            'success',
+            "The announcement <strong>{$ad->getTitle()}</strong> has been remove"
+        );
+        return  $this->redirectToRoute("ad_list");
     }
 }
