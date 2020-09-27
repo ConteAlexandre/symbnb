@@ -9,7 +9,6 @@
 namespace App\Form;
 
 use App\Entity\Ad;
-use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\MoneyType;
@@ -25,25 +24,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  *
  * @author CONTE Alexandre <pro.alexandre.conte@gmail.com>
  */
-class AdCreateType extends AbstractType
+class AdCreateType extends ApplicationType
 {
-    /**
-     * @param $label
-     * @param $placeholder
-     * @param array $options
-     *
-     * @return array
-     */
-    private function getConfiguration($label, $placeholder, $options = [])
-    {
-        return array_merge([
-            'label' => $label,
-            'attr' => [
-                'placeholder' => $placeholder
-            ]
-        ], $options);
-    }
-
     /**
      * @param FormBuilderInterface $builder
      * @param array $options
