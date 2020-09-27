@@ -4,6 +4,7 @@ namespace App\DataFixtures;
 
 use App\Entity\Ad;
 use App\Entity\Image;
+use App\Entity\Role;
 use App\Entity\Users;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
@@ -22,6 +23,23 @@ class AppFixtures extends Fixture
     public function load(ObjectManager $manager)
     {
         $faker = Factory::create('en_US');
+
+        $adminRole = new Role();
+        $adminRole->setTitle('ROLE_ADMIN');
+        $manager->persist($adminRole);
+
+        $adminUser = new Users();
+        $adminUser->setFirstName('Michel')
+            ->setLastName('Michel')
+            ->setEmail('michel@example.com')
+            ->setPassword($this->passwordEncoder->encodePassword($adminUser, 'michel'))
+            ->setPicture('https://avatar.io/twitter/LiiorC')
+            ->setIntroduction($faker->sentence())
+            ->setDescription('<p>'.join('</p><p>', $faker->paragraphs(3)). '</p>')
+            ->addUserRole($adminRole)
+            ->setSalt(rtrim(str_replace('+', '.', base64_encode(random_bytes(32))), '='))
+        ;
+        $manager->persist($adminUser);
 
         // Manage Users
         $users = [];
@@ -46,6 +64,7 @@ class AppFixtures extends Fixture
                 ->setDescription('<p>'.join('</p><p>', $faker->paragraphs(3)). '</p>')
                 ->setPassword($password)
                 ->setPicture($picture)
+                ->setSalt(rtrim(str_replace('+', '.', base64_encode(random_bytes(32))), '='))
             ;
 
             $manager->persist($user);
