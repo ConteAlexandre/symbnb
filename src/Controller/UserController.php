@@ -8,17 +8,13 @@
 
 namespace App\Controller;
 
-use App\Entity\PasswordUpdate;
 use App\Form\ProfileType;
-use App\Form\UpdatePasswordType;
 use App\Manager\UsersManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 /**
  * Class UserController
@@ -40,16 +36,10 @@ class UserController extends AbstractController
      */
     protected $em;
 
-    /**
-     * @var UserPasswordEncoderInterface $encoderPassword
-     */
-    protected $encoderPassword;
-
-    public function __construct(UsersManager $usersManager, EntityManagerInterface $entityManager, UserPasswordEncoderInterface $passwordEncoder)
+    public function __construct(UsersManager $usersManager, EntityManagerInterface $entityManager)
     {
         $this->userManager = $usersManager;
         $this->em = $entityManager;
-        $this->encoderPassword = $passwordEncoder;
     }
 
     /**
@@ -81,40 +71,28 @@ class UserController extends AbstractController
     }
 
     /**
-     * @Route("/update-password", name="update_password")
-     *
-     * @param Request $request
+     * @Route("/{slug}/profile", name="profile")
      *
      * @return Response
      */
-    public function updatePassword(Request $request)
+    public function profileUser($slug)
     {
-        $passwordUpdate = new PasswordUpdate();
-        $user = $this->getUser();
-        $form = $this->createForm(UpdatePasswordType::class, $passwordUpdate);
-        $form->handleRequest($request);
+        $user = $this->userManager->getUserBySlug($slug);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            // Verification the oldPassword between the new password
-            if (!password_verify($passwordUpdate->getOldPassword(), $user->getPassword())) {
-                $form->get('oldPassword')->addError(new FormError("The old password is not equal"));
-            } else {
-                $newPassword = $passwordUpdate->getNewPassword();
-                $password = $this->encoderPassword->encodePassword($user, $newPassword);
-                $user->setPassword($password);
-                $this->em->persist($user);
-                $this->em->flush();
+        return $this->render('users/profile.html.twig', [
+            'user' => $user
+        ]);
+    }
 
-                $this->addFlash(
-                    'success',
-                    'Update password it\'s ok '
-                );
-                return $this->redirectToRoute('homepage');
-            }
-        }
-
-        return $this->render('users/password.html.twig', [
-            'form' => $form->createView()
+    /**
+     * @Route("/myprofile", name="myPofile")
+     *
+     * @return Response
+     */
+    public function myProfile()
+    {
+        return $this->render('users/profile.html.twig', [
+            'user' => $this->getUser()
         ]);
     }
 }

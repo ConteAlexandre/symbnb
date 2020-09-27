@@ -98,6 +98,7 @@ class AdController extends AbstractController
                 $image->setAd($ad);
                 $this->imageManger->save($image, false);
             }
+            $ad->setAuthor($this->getUser());
             $this->adManager->save($ad);
             $this->addFlash(
                 'success', "Announcement <strong>{$ad->getTitle()}</strong> created"

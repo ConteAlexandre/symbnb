@@ -22,12 +22,13 @@
                 <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
                     <ol class="carousel-indicators">
                         {% for image in ad.images %}
-                        <li data-target="#carouselExampleIndicators" data-slide-to="{{ loop.index0 }}" {% if loop.first %}class="active" {% endif %}></li>
+                            <li data-target="#carouselExampleIndicators" data-slide-to="{{ loop.index0 }}"
+                                {% if loop.first %}class="active" {% endif %}></li>
                         {% endfor %}
                     </ol>
                     <div class="carousel-inner">
                         {% for image in ad.images %}
-                            <div class="carousel-item {% if loop.first%} active{% endif %}">
+                            <div class="carousel-item {% if loop.first %} active{% endif %}">
                                 <img src="{{ image.url }}" class="d-block w-100" alt="...">
                                 <div class="carousel-caption d-none d-md-block">
                                     <h5>{{ ad.title }}</h5>
@@ -50,10 +51,14 @@
                 {% set a = ad.author %}
                 <div class="row">
                     <div class="col-3">
-                        <img src="{{ a.picture }}" alt="{{ a.fullName }}" class="avatar avatar-medium">
+                        <a href="{{ path('user_profile', {'slug': a.slug }) }}">
+                            <img src="{{ a.picture }}" alt="{{ a.fullName }}" class="avatar avatar-medium">
+                        </a>
                     </div>
                     <div class="col">
-                        <h3>{{ a.fullName }}</h3>
+                        <a href="{{ path('user_profile', {'slug': a.slug }) }}">
+                            <h3>{{ a.fullName }}</h3>
+                        </a>
                         <span class="badge badge-primary">{{ a.ads | length }} announcements</span>
                     </div>
                 </div>

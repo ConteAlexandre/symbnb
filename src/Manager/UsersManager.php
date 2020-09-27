@@ -46,6 +46,12 @@ class UsersManager
         return $user;
     }
 
+    public function getUserBySlug($slug)
+    {
+        $user = $this->usersRepository->findOneBySlug($slug);
+        return $user;
+    }
+
     public function updatePassword(Users $users)
     {
         if (0 !== strlen($password = $users->getPassword())) {
