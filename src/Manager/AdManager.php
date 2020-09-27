@@ -75,4 +75,17 @@ class AdManager
             $this->em->flush();
         }
     }
+
+    /**
+     * @param $slug
+     * @param bool $andFlush
+     */
+    public function deleteAnnouncement($slug, $andFlush = true)
+    {
+        $ad = $this->adRepository->findOneBySlug($slug);
+        $this->em->remove($ad);
+        if ($andFlush) {
+            $this->em->flush();
+        }
+    }
 }
