@@ -30,18 +30,24 @@ class AdCreateType extends AbstractType
     /**
      * @param $label
      * @param $placeholder
+     * @param array $options
+     *
      * @return array
      */
-    private function getConfiguration($label, $placeholder)
+    private function getConfiguration($label, $placeholder, $options = [])
     {
-        return [
+        return array_merge([
             'label' => $label,
             'attr' => [
                 'placeholder' => $placeholder
             ]
-        ];
+        ], $options);
     }
 
+    /**
+     * @param FormBuilderInterface $builder
+     * @param array $options
+     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
@@ -53,7 +59,9 @@ class AdCreateType extends AbstractType
             ->add(
                 'slug',
                 TextType::class,
-                $this->getConfiguration('Slug', 'Web Address (auto)')
+                $this->getConfiguration('Slug', 'Web Address (auto)', [
+                    'required' => false
+                ])
             )
             ->add(
                 'coverImage',
@@ -85,12 +93,16 @@ class AdCreateType extends AbstractType
                 CollectionType::class,
                 [
                     'entry_type' => ImageAddType::class,
-                    'allow_add' => true
+                    'allow_add' => true,
+                    'allow_delete' => true
                 ]
             )
         ;
     }
 
+    /**
+     * @param OptionsResolver $resolver
+     */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver

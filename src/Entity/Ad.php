@@ -7,10 +7,16 @@ use Cocur\Slugify\Slugify;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=AdRepository::class)
  * @ORM\HasLifecycleCallbacks()
+ * @UniqueEntity(
+ *     fields={"title"},
+ *     message="The title announcements already"
+ * )
  */
 class Ad
 {
@@ -23,6 +29,7 @@ class Ad
 
     /**
      * @ORM\Column(name="title", type="string", length=255)
+     * @Assert\Length(min="10", minMessage="The title must be minimum 10 characters", max="255", maxMessage="The title nmust not be 255 characters")
      */
     private $title;
 
@@ -38,16 +45,19 @@ class Ad
 
     /**
      * @ORM\Column(name="introduction", type="text")
+     * @Assert\Length(min="20", minMessage="The introduction must be minimum 20 characters")
      */
     private $introduction;
 
     /**
      * @ORM\Column(name="content", type="text")
+     * @Assert\Length(min="100", minMessage="The content must be minimum 100 characters")
      */
     private $content;
 
     /**
      * @ORM\Column(name="cover_image", type="string", length=255)
+     * @Assert\Url()
      */
     private $coverImage;
 
@@ -58,6 +68,7 @@ class Ad
 
     /**
      * @ORM\OneToMany(targetEntity=Image::class, mappedBy="ad", orphanRemoval=true)
+     * @Assert\Valid()
      */
     private $images;
 
