@@ -12,7 +12,7 @@
             <p class="h2">
                 <strong>{{ ad.rooms }} rooms</strong> pour <strong>{{ ad.price }} € </strong> for one night
             </p>
-            <a href="#" class="btn btn-primary">Reservation</a>
+            <a href="{{ path('book_create', {'slug': ad.slug}) }}" class="btn btn-primary">Reservation</a>
             {% if app.user and app.user == ad.author %}
                 <a href="{{ path('ad_edit', {'slug': ad.slug }) }}" class="btn btn-primary">Update announcement</a>
                 <a href="{{ path('ad_delete', {'slug': ad.slug }) }}" class="btn btn-danger" onclick="return confirm('Sure for delete this announcement : {{ ad.title }}')">Delete announcement</a>

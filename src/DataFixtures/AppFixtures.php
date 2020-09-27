@@ -3,6 +3,7 @@
 namespace App\DataFixtures;
 
 use App\Entity\Ad;
+use App\Entity\Booking;
 use App\Entity\Image;
 use App\Entity\Role;
 use App\Entity\Users;
@@ -35,17 +36,16 @@ class AppFixtures extends Fixture
             ->setPassword($this->passwordEncoder->encodePassword($adminUser, 'michel'))
             ->setPicture('https://avatar.io/twitter/LiiorC')
             ->setIntroduction($faker->sentence())
-            ->setDescription('<p>'.join('</p><p>', $faker->paragraphs(3)). '</p>')
+            ->setDescription('<p>' . join('</p><p>', $faker->paragraphs(3)) . '</p>')
             ->addUserRole($adminRole)
-            ->setSalt(rtrim(str_replace('+', '.', base64_encode(random_bytes(32))), '='))
-        ;
+            ->setSalt(rtrim(str_replace('+', '.', base64_encode(random_bytes(32))), '='));
         $manager->persist($adminUser);
 
         // Manage Users
         $users = [];
-        $genders = [ 'male', 'female'];
+        $genders = ['male', 'female'];
 
-        for ($i = 1; $i <=10; $i++) {
+        for ($i = 1; $i <= 10; $i++) {
             $user = new Users();
 
             $gender = $faker->randomElement($genders);
@@ -61,11 +61,10 @@ class AppFixtures extends Fixture
                 ->setLastName($faker->lastName)
                 ->setEmail($faker->email)
                 ->setIntroduction($faker->sentence())
-                ->setDescription('<p>'.join('</p><p>', $faker->paragraphs(3)). '</p>')
+                ->setDescription('<p>' . join('</p><p>', $faker->paragraphs(3)) . '</p>')
                 ->setPassword($password)
                 ->setPicture($picture)
-                ->setSalt(rtrim(str_replace('+', '.', base64_encode(random_bytes(32))), '='))
-            ;
+                ->setSalt(rtrim(str_replace('+', '.', base64_encode(random_bytes(32))), '='));
 
             $manager->persist($user);
             $users[] = $user;
@@ -78,7 +77,7 @@ class AppFixtures extends Fixture
             $title = $faker->sentence();
             $coverImage = $faker->imageUrl(1000, 350, 'city');
             $introduction = $faker->paragraph(2);
-            $content = '<p>'.join('</p><p>', $faker->paragraphs(5)). '</p>';
+            $content = '<p>' . join('</p><p>', $faker->paragraphs(5)) . '</p>';
 
             $user = $users[mt_rand(0, count($users) - 1)];
 
@@ -88,9 +87,8 @@ class AppFixtures extends Fixture
                 ->setContent($content)
                 ->setPrice(mt_rand(40, 200))
                 ->setRooms(mt_rand(3, 8))
-                ->setAuthor($user)
-            ;
-            
+                ->setAuthor($user);
+
             for ($j = 1; $j <= mt_rand(2, 5); $j++) {
                 $image = new Image();
 
@@ -99,6 +97,28 @@ class AppFixtures extends Fixture
                     ->setAd($ad);
 
                 $manager->persist($image);
+            }
+
+            // Manage Booking
+            for ($j = 1; $j <= mt_rand(0, 10); $j++) {
+                $booking = new Booking();
+
+                $startDate = $faker->dateTimeBetween('-3 months');
+                $duration = mt_rand(3, 10);
+                $endDate = (clone $startDate)->modify("+$duration days");
+                $amount = $ad->getPrice() * $duration;
+                $comment = $faker->paragraph();
+
+                $booker = $users[mt_rand(0, count($users) - 1)];
+
+                $booking
+                    ->setBooker($booker)
+                    ->setAd($ad)
+                    ->setStartDate($startDate)
+                    ->setEndDate($endDate)
+                    ->setAmount($amount)
+                    ->setComment($comment);
+                $manager->persist($booking);
             }
 
             $manager->persist($ad);
