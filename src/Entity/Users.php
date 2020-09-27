@@ -7,11 +7,17 @@ use Cocur\Slugify\Slugify;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=UsersRepository::class)
  * @ORM\HasLifecycleCallbacks()
+ * @UniqueEntity(
+ *     fields={"email"},
+ *     message="This email is already used."
+ * )
  */
 class Users implements UserInterface
 {
@@ -24,21 +30,25 @@ class Users implements UserInterface
 
     /**
      * @ORM\Column(name="first_name", type="string", length=255)
+     * @Assert\NotBlank(message="This field is missing.")
      */
     private $firstName;
 
     /**
      * @ORM\Column(name="last_name", type="string", length=255)
+     * @Assert\NotBlank(message="This field is missing.")
      */
     private $lastName;
 
     /**
      * @ORM\Column(name="email", type="string", length=255)
+     * @Assert\Email(message="The fields {{ fields }} were not expected.")
      */
     private $email;
 
     /**
      * @ORM\Column(name="picture", type="string", length=255, nullable=true)
+     * @Assert\Url(message="This field is not valid")
      */
     private $picture;
 
@@ -48,12 +58,19 @@ class Users implements UserInterface
     private $password;
 
     /**
+     * @Assert\EqualTo(propertyPath="password", message="This fields not equal at field password")
+     */
+    public $passwordConfirm;
+
+    /**
      * @ORM\Column(name="introduction", type="string", length=255)
+     * @Assert\Length(min="10", minMessage="The introduction must be minimum 10 charcaters")
      */
     private $introduction;
 
     /**
      * @ORM\Column(name="description", type="text")
+     * @Assert\Length(min="100", minMessage="The description must be minimum 100 charcaters")
      */
     private $description;
 
@@ -61,6 +78,11 @@ class Users implements UserInterface
      * @ORM\Column(name="slug", type="string", length=255)
      */
     private $slug;
+
+    /**
+     * @ORM\Column(name="salt", type="string")
+     */
+    private $salt;
 
     /**
      * @ORM\OneToMany(targetEntity=Ad::class, mappedBy="author")
@@ -219,6 +241,11 @@ class Users implements UserInterface
     public function getRoles()
     {
         return ['ROLE_USER'];
+    }
+
+    public function setSalt($salt)
+    {
+        $this->salt = $salt;
     }
 
     public function getSalt()

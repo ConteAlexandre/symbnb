@@ -11,11 +11,22 @@
                 <a class="nav-link" href="{{ path('homepage') }}">Home </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">My Account</a>
-            </li>
-            <li class="nav-item">
                 <a class="nav-link" href="{{ path('ad_list') }}">Announcements</a>
             </li>
+        </ul>
+        <ul class="navbar-nav ml-auto">
+            {% if app.user %}
+            <li class="nav-item">
+                <a href="{{ path('logout') }}" class="nav-link">Logout</a>
+            </li>
+            {% else %}
+            <li class="nav-item">
+                <a href="{{ path('register') }}" class="nav-link">Sign Up</a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ path('login') }}" class="nav-link">Sign In</a>
+            </li>
+            {% endif %}
         </ul>
     </div>
 </nav>
