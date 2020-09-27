@@ -59,7 +59,6 @@ class BookingCreateType extends ApplicationType
         $resolver
             ->setDefaults([
                 'data_class' => Booking::class,
-                'csrf_protection' => false
             ]);
     }
 }

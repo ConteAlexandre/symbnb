@@ -9,6 +9,7 @@
 namespace App\Controller;
 
 use App\Entity\Ad;
+use App\Entity\Booking;
 use App\Form\BookingCreateType;
 use App\Manager\BookingManager;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
@@ -57,14 +58,29 @@ class BookingController extends AbstractController
             ;
             $this->bookingManager->save($booking);
 
-            return $this->redirectToRoute('booking_success', [
-                'id' => $booking->getId()
+            return $this->redirectToRoute('book_show', [
+                'id' => $booking->getId(),
+                'withAlert' => true
             ]);
         }
 
         return $this->render('booking/create.html.twig', [
             'ad' => $ad,
             'form' => $form->createView()
+        ]);
+    }
+
+    /**
+     * @Route("/{id}/show", name="show")
+     *
+     * @param Booking $booking
+     *
+     * @return Response
+     */
+    public function showBooking(Booking $booking)
+    {
+        return $this->render('booking/show.html.twig', [
+            'booking' => $booking
         ]);
     }
 }
