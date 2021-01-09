@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Register the new announcement{% endblock %}
+
+{% form_theme form 'Ad/_collection.html.twig' %}
+
+{% block body %}
+    <div class="container">
+        <h2>Register new announcement</h2>
+
+        {{ form_start(form) }}
+
+        {{ form_widget(form) }}
+
+        <button type="submit" class="btn btn-primary">Register the new announcement</button>
+
+        {{ form_end(form) }}
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script src="{{ asset('js/ad.js') }}"></script>
+{% endblock %}

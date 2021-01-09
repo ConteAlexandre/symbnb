@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} Our beautiful announcements {% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h2>Here is announcements of our hosts</h2>
+
+        <div class="row">
+            {% for ad in ads %}
+               {% include 'Ad/_ad.html.twig' %}
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}
